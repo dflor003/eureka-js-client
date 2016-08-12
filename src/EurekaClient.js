@@ -51,6 +51,9 @@ export default class Eureka extends EventEmitter {
 
     this.logger.debug('initializing eureka client');
 
+    // Allow passing in a custom request instance with its own defaults
+    this.request = config.request || request;
+
     // Load up the current working directory and the environment:
     const cwd = config.cwd || process.cwd();
     const env = process.env.NODE_ENV || 'development';
@@ -432,7 +435,7 @@ export default class Eureka extends EventEmitter {
         baseUrl: eurekaUrl,
         gzip: true,
       }, opts);
-      request[requestOpts.method ? requestOpts.method.toLowerCase() : 'get'](requestOpts,
+      this.request[requestOpts.method ? requestOpts.method.toLowerCase() : 'get'](requestOpts,
         (error, response, body) => {
           if ((error ||
               (response && response.statusCode && String(response.statusCode)[0] === '5')) &&
